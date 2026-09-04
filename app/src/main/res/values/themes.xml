@@ -1,0 +1,12 @@
+<resources>
+    <style name="Theme.RotationBoard" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/text_main</item>
+        <item name="colorPrimaryVariant">@color/text_main</item>
+        <item name="colorOnPrimary">@color/bg</item>
+        <item name="colorSecondary">@color/ready</item>
+        <item name="colorOnSecondary">@color/bg</item>
+        <item name="android:windowBackground">@color/bg</item>
+        <item name="android:statusBarColor">@color/bg</item>
+        <item name="android:textColorPrimary">@color/text_main</item>
+    </style>
+</resources>

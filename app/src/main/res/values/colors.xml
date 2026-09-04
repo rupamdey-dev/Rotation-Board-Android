@@ -1,0 +1,12 @@
+<resources>
+    <color name="bg">#12161C</color>
+    <color name="surface">#1B212B</color>
+    <color name="surface2">#222939</color>
+    <color name="text_main">#E7EAEE</color>
+    <color name="text_dim">#8891A0</color>
+    <color name="ready">#4FD1A5</color>
+    <color name="cooling">#E8A33D</color>
+    <color name="idle">#5B6472</color>
+    <color name="danger">#E1636B</color>
+    <color name="border">#2A3140</color>
+</resources>
