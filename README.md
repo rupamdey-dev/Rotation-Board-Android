@@ -15,7 +15,33 @@ account's cooldown finishes, not just a notification.
 - When the time hits, you get a real alarm: loud looping sound (plays even in
   silent mode, same as your Clock app), vibration, and a full-screen popup —
   even if your phone is locked or the app is fully closed.
+- **Snooze** button on the alarm screen (+10 minutes) alongside Dismiss.
 - Alarms survive phone restarts.
+- A one-tap **"Fix this"** banner appears if your phone's battery optimizer
+  might block background alarms — tapping it takes you straight to the
+  system permission screen (this matters a lot on Xiaomi/Vivo/Oppo/Realme/
+  OnePlus phones, which are aggressive about killing background apps).
+- **Search bar** to filter accounts by email or project once you have several.
+- **Status summary** at the top ("2 ready · 3 cooling · 1 idle").
+- Accounts auto-sort with the most actionable ones on top: ready first, then
+  soonest-to-finish, then idle.
+- **Copy button** on each row to quickly copy the Gmail address to your
+  clipboard when you're ready to switch accounts.
+
+## If an alarm doesn't ring
+This app was hardened against the most common causes, but Android phones
+(especially Xiaomi/MIUI, Vivo, Oppo, Realme, and OnePlus) are notorious for
+killing scheduled background alarms unless you explicitly tell the OS not to.
+If an alarm is ever silent:
+1. Open the app — if you see the **"Fix this"** banner, tap it and allow the
+   app to ignore battery optimization.
+2. On MIUI/Vivo/Oppo phones specifically, also check Settings → Apps →
+   Rotation Board → look for an "Autostart" or "Allow background activity"
+   toggle and enable it — this is a manufacturer-specific setting outside
+   what any app can request permission for directly.
+3. Make sure notification permission was granted (the app asks for this on
+   first open).
+
 
 ## How to build the APK (no local Android Studio needed)
 
