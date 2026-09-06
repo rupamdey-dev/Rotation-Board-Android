@@ -159,6 +159,7 @@ class AddEditAccountActivity : AppCompatActivity() {
             }
 
             AlarmScheduler.schedule(this@AddEditAccountActivity, finalAccount)
+            com.rotationboard.app.widget.WidgetUpdater.requestUpdate(applicationContext)
             val sdf = SimpleDateFormat("h:mm a", Locale.getDefault())
             android.widget.Toast.makeText(
                 this@AddEditAccountActivity,

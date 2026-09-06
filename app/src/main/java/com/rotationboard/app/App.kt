@@ -6,10 +6,14 @@ import android.app.NotificationManager
 import android.media.AudioAttributes
 import android.media.RingtoneManager
 import android.os.Build
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.rotationboard.app.util.AlarmCheckWorker
+import com.rotationboard.app.util.AppLockManager
 import java.util.concurrent.TimeUnit
 
 class App : Application() {
@@ -41,6 +45,14 @@ class App : Application() {
             ExistingPeriodicWorkPolicy.KEEP,
             workRequest
         )
+
+        ProcessLifecycleOwner.get().lifecycle.addObserver(object : DefaultLifecycleObserver {
+            override fun onStop(owner: LifecycleOwner) {
+                // Whole app (not just one activity) left the foreground — require
+                // re-authentication next time it's opened, if app lock is enabled.
+                AppLockManager.onAppBackgrounded()
+            }
+        })
     }
 
     companion object {

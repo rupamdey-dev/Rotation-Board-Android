@@ -28,6 +28,20 @@ account's cooldown finishes, not just a notification.
 - **Copy button** on each row to quickly copy the Gmail address to your
   clipboard when you're ready to switch accounts.
 
+## New features
+- **Custom alarm sound** — "Alarm sound" button on the dashboard opens your
+  phone's ringtone picker so you can choose any sound instead of the bundled
+  beep. Falls back to the bundled sound automatically if picking fails.
+- **Home screen widget** — long-press your home screen → Widgets →
+  Rotation Board. Shows what needs attention (ready accounts, or the next
+  one coming up) without opening the app. Updates whenever you add/edit an
+  account, whenever the backup worker runs (~every 15 min), and passively
+  every ~30 minutes otherwise. Tap it to open the app.
+- **App lock** — toggle in the dashboard settings row. Requires your phone's
+  fingerprint/face unlock or PIN/pattern to open the app after it's been in
+  the background. Needs a screen lock or biometric already set up on your
+  phone to enable.
+
 ## Debug log (new)
 There's now a **"Debug log"** button on the dashboard (top-right of the
 account list area). It records, with timestamps, every step of the alarm

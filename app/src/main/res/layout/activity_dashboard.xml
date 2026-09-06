@@ -1,173 +1,255 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/bg">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="20dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/app_name"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textColor="@color/text_main" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginTop="8dp">
-
-            <TextView
-                android:id="@+id/tvWho"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textColor="@color/text_dim"
-                android:textSize="13sp" />
-
-            <Button
-                android:id="@+id/btnLogout"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Log out"
-                android:textSize="12sp" />
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/tvSummary"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/text_dim"
-            android:textSize="12sp"
-            android:layout_marginTop="10dp" />
-
-        <EditText
-            android:id="@+id/etSearch"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Search by email or project"
-            android:textColorHint="@color/text_dim"
-            android:textColor="@color/text_main"
-            android:background="@color/surface"
-            android:padding="10dp"
-            android:layout_marginTop="10dp"
-            android:inputType="text"
-            android:maxLines="1" />
-
-        <LinearLayout
-            android:id="@+id/bannerBattery"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@color/surface"
-            android:padding="12dp"
-            android:layout_marginTop="10dp"
-            android:visibility="gone">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="For alarms to ring reliably, allow this app to ignore battery optimization."
-                android:textColor="@color/text_dim"
-                android:textSize="12sp" />
-
-            <Button
-                android:id="@+id/btnFixBattery"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Fix this"
-                android:textSize="12sp" />
-        </LinearLayout>
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@color/surface"
-            android:padding="12dp"
-            android:layout_marginTop="10dp">
+            android:padding="20dp">
 
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="On Xiaomi, Vivo, Oppo, Realme, OnePlus, and Huawei/Honor phones, also allow &quot;Autostart&quot; / background activity for this app — this is the #1 reason scheduled alarms go silent."
-                android:textColor="@color/text_dim"
-                android:textSize="12sp" />
-
-            <Button
-                android:id="@+id/btnAutostart"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Open autostart settings"
-                android:textSize="12sp" />
+                android:text="@string/app_name"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_main" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="8dp">
+
+                <TextView
+                    android:id="@+id/tvWho"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="@color/text_dim"
+                    android:textSize="13sp" />
+
+                <Button
+                    android:id="@+id/btnLogout"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Log out"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvSummary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_dim"
+                android:textSize="12sp"
+                android:layout_marginTop="10dp" />
+
+            <EditText
+                android:id="@+id/etSearch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Search by email or project"
+                android:textColorHint="@color/text_dim"
+                android:textColor="@color/text_main"
+                android:background="@color/surface"
+                android:padding="10dp"
+                android:layout_marginTop="10dp"
+                android:inputType="text"
+                android:maxLines="1" />
+
+            <LinearLayout
+                android:id="@+id/bannerBattery"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@color/surface"
+                android:padding="12dp"
+                android:layout_marginTop="10dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="For alarms to ring reliably, allow this app to ignore battery optimization."
+                    android:textColor="@color/text_dim"
+                    android:textSize="12sp" />
+
+                <Button
+                    android:id="@+id/btnFixBattery"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Fix this"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@color/surface"
+                android:padding="12dp"
+                android:layout_marginTop="10dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="On Xiaomi, Vivo, Oppo, Realme, OnePlus, and Huawei/Honor phones, also allow &quot;Autostart&quot; / background activity for this app — this is the #1 reason scheduled alarms go silent."
+                    android:textColor="@color/text_dim"
+                    android:textSize="12sp" />
+
+                <Button
+                    android:id="@+id/btnAutostart"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Open autostart settings"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="10dp">
+
+                <Button
+                    android:id="@+id/btnAlarmSound"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Alarm sound"
+                    android:textSize="12sp" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="@color/surface"
+                    android:padding="8dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="App lock"
+                        android:textColor="@color/text_dim"
+                        android:textSize="12sp" />
+
+                    <Switch
+                        android:id="@+id/switchAppLock"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+            </LinearLayout>
         </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingHorizontal="16dp"
+                android:clipToPadding="false" />
+
+            <TextView
+                android:id="@+id/tvEmpty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="No accounts yet.\nTap + to add one."
+                android:gravity="center"
+                android:textColor="@color/text_dim"
+                android:visibility="gone" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fabAdd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="20dp"
+                android:src="@android:drawable/ic_input_add"
+                app:backgroundTint="@color/ready" />
+
+            <Button
+                android:id="@+id/btnTestAlarm"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|start"
+                android:layout_margin="12dp"
+                android:text="Test alarm now"
+                android:textSize="11sp"
+                android:textColor="@color/text_dim" />
+
+            <Button
+                android:id="@+id/btnDebugLog"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|end"
+                android:layout_margin="4dp"
+                android:text="Debug log"
+                android:textSize="11sp"
+                android:textColor="@color/text_dim" />
+        </FrameLayout>
     </LinearLayout>
 
-    <FrameLayout
+    <!-- Full-screen lock overlay: a sibling of everything above, so it
+         covers the header/search/username too, not just the account list. -->
+    <LinearLayout
+        android:id="@+id/lockOverlay"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingHorizontal="16dp"
-            android:clipToPadding="false" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="@color/bg"
+        android:visibility="gone"
+        android:clickable="true"
+        android:focusable="true">
 
         <TextView
-            android:id="@+id/tvEmpty"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="No accounts yet.\nTap + to add one."
-            android:gravity="center"
-            android:textColor="@color/text_dim"
-            android:visibility="gone" />
+            android:text="🔒"
+            android:textSize="48sp" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fabAdd"
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="20dp"
-            android:src="@android:drawable/ic_input_add"
-            app:backgroundTint="@color/ready" />
+            android:text="Locked"
+            android:textColor="@color/text_main"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginTop="12dp" />
 
         <Button
-            android:id="@+id/btnTestAlarm"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:id="@+id/btnUnlock"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|start"
-            android:layout_margin="12dp"
-            android:text="Test alarm now"
-            android:textSize="11sp"
-            android:textColor="@color/text_dim" />
-
-        <Button
-            android:id="@+id/btnDebugLog"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top|end"
-            android:layout_margin="4dp"
-            android:text="Debug log"
-            android:textSize="11sp"
-            android:textColor="@color/text_dim" />
-    </FrameLayout>
-</LinearLayout>
+            android:text="Unlock"
+            android:layout_marginTop="20dp" />
+    </LinearLayout>
+</FrameLayout>

@@ -47,6 +47,8 @@ class AlarmCheckWorker(context: Context, params: WorkerParameters) : CoroutineWo
             Log.e(TAG, "Backup worker failed", e)
             DebugLog.add(applicationContext, "WORKER ERROR at $timeStr: ${e.javaClass.simpleName}: ${e.message}")
             Result.retry()
+        } finally {
+            com.rotationboard.app.widget.WidgetUpdater.requestUpdate(applicationContext)
         }
     }
 

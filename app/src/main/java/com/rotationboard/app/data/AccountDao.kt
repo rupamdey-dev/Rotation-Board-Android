@@ -12,6 +12,9 @@ interface AccountDao {
     @Query("SELECT * FROM accounts WHERE userId = :userId ORDER BY id DESC")
     fun observeForUser(userId: Long): Flow<List<AccountEntity>>
 
+    @Query("SELECT * FROM accounts WHERE userId = :userId ORDER BY id DESC")
+    suspend fun getForUserOnce(userId: Long): List<AccountEntity>
+
     @Query("SELECT * FROM accounts WHERE endTime IS NOT NULL")
     suspend fun getAllScheduled(): List<AccountEntity>
 

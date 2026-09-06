@@ -20,6 +20,7 @@ import com.rotationboard.app.R
 import com.rotationboard.app.data.AppDatabase
 import com.rotationboard.app.ui.AlarmActivity
 import com.rotationboard.app.util.AlarmScheduler
+import com.rotationboard.app.util.AlarmPrefs
 import com.rotationboard.app.util.DebugLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -151,7 +152,31 @@ class AlarmRingService : Service() {
     }
 
     private fun startAlarmSound() {
-        // Primary source: the sound file bundled inside the app (res/raw/alarm_sound.wav).
+        // 1) If the user picked a custom ringtone, try that first.
+        val customUri = AlarmPrefs.getCustomSoundUri(this)
+        if (customUri != null) {
+            try {
+                mediaPlayer = MediaPlayer().apply {
+                    setAudioAttributes(buildAlarmAttributes())
+                    setDataSource(this@AlarmRingService, customUri)
+                    isLooping = true
+                    setOnPreparedListener { it.start() }
+                    setOnErrorListener { _, what, extra ->
+                        Log.e(TAG, "Custom sound MediaPlayer error: what=$what extra=$extra")
+                        true
+                    }
+                    prepareAsync()
+                }
+                Log.d(TAG, "Playing custom-picked alarm sound: $customUri")
+                DebugLog.add(this, "SERVICE: custom sound started OK ($customUri)")
+                return
+            } catch (e: Exception) {
+                Log.e(TAG, "Custom sound failed, falling back to bundled sound", e)
+                DebugLog.add(this, "SERVICE ERROR: custom sound failed: ${e.javaClass.simpleName}: ${e.message}")
+            }
+        }
+
+        // 2) The sound file bundled inside the app (res/raw/alarm_sound.wav).
         // This can never be null/missing the way a system ringtone URI sometimes is.
         try {
             mediaPlayer = MediaPlayer.create(this, R.raw.alarm_sound, buildAlarmAttributes(), 0)
@@ -167,7 +192,7 @@ class AlarmRingService : Service() {
             DebugLog.add(this, "SERVICE ERROR: bundled sound failed: ${e.javaClass.simpleName}: ${e.message}")
         }
 
-        // Fallback: try the system's alarm/notification/ringtone in that order.
+        // 3) Last resort: try the system's alarm/notification/ringtone in that order.
         try {
             val uri: Uri? = RingtoneManager.getActualDefaultRingtoneUri(this, RingtoneManager.TYPE_ALARM)
                 ?: RingtoneManager.getActualDefaultRingtoneUri(this, RingtoneManager.TYPE_NOTIFICATION)
@@ -228,6 +253,7 @@ class AlarmRingService : Service() {
                 val snoozed = acc.copy(endTime = System.currentTimeMillis() + SNOOZE_MS, rung = false)
                 dao.update(snoozed)
                 AlarmScheduler.schedule(applicationContext, snoozed)
+                com.rotationboard.app.widget.WidgetUpdater.requestUpdate(applicationContext)
             }
             stopAlarm()
         }

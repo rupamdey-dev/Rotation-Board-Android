@@ -3,6 +3,7 @@ package com.rotationboard.app.ui
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -15,15 +16,22 @@ import android.text.TextWatcher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.biometric.BiometricManager
+import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.rotationboard.app.data.AccountEntity
 import com.rotationboard.app.data.AppDatabase
 import com.rotationboard.app.databinding.ActivityDashboardBinding
+import com.rotationboard.app.util.AlarmPrefs
 import com.rotationboard.app.util.AlarmScheduler
+import com.rotationboard.app.util.AppLockManager
+import com.rotationboard.app.util.OemSettingsHelper
 import com.rotationboard.app.util.SessionManager
+import com.rotationboard.app.widget.WidgetUpdater
 import kotlinx.coroutines.launch
+import java.util.concurrent.Executor
 
 class DashboardActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDashboardBinding
@@ -42,6 +50,13 @@ class DashboardActivity : AppCompatActivity() {
     private val notifPermLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { /* no-op either way; UI just won't show notifications if denied */ }
+
+    private val ringtonePickerLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        val uri = result.data?.getParcelableExtra<Uri>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
+        AlarmPrefs.setCustomSoundUri(this, uri)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,8 +104,12 @@ class DashboardActivity : AppCompatActivity() {
 
         binding.btnFixBattery.setOnClickListener { requestIgnoreBatteryOptimizations() }
         binding.btnAutostart.setOnClickListener {
-            com.rotationboard.app.util.OemSettingsHelper.openAutoStartSettings(this)
+            OemSettingsHelper.openAutoStartSettings(this)
         }
+        binding.btnAlarmSound.setOnClickListener { openRingtonePicker() }
+
+        setupAppLockSwitch()
+        binding.btnUnlock.setOnClickListener { showBiometricPrompt() }
 
         requestNotifPermissionIfNeeded()
         updateBatteryBanner()
@@ -101,9 +120,84 @@ class DashboardActivity : AppCompatActivity() {
             db.accountDao().observeForUser(userId).collect { list ->
                 allAccounts = list
                 applyFilterAndSort()
+                WidgetUpdater.requestUpdate(applicationContext)
             }
         }
     }
+
+    // ---------- App lock ----------
+
+    private fun setupAppLockSwitch() {
+        binding.switchAppLock.setOnCheckedChangeListener(null)
+        binding.switchAppLock.isChecked = AppLockManager.isLockEnabled(this)
+        binding.switchAppLock.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                val biometricManager = BiometricManager.from(this)
+                val canAuth = biometricManager.canAuthenticate(
+                    BiometricManager.Authenticators.BIOMETRIC_WEAK or
+                        BiometricManager.Authenticators.DEVICE_CREDENTIAL
+                )
+                if (canAuth != BiometricManager.BIOMETRIC_SUCCESS) {
+                    android.widget.Toast.makeText(
+                        this,
+                        "Set up a fingerprint, face unlock, or screen lock (PIN/pattern) in your phone settings first.",
+                        android.widget.Toast.LENGTH_LONG
+                    ).show()
+                    binding.switchAppLock.isChecked = false
+                    return@setOnCheckedChangeListener
+                }
+                AppLockManager.setLockEnabled(this, true)
+                AppLockManager.isUnlockedThisSession = true // already "in" the app right now, don't immediately re-lock
+            } else {
+                AppLockManager.setLockEnabled(this, false)
+            }
+        }
+    }
+
+    private fun checkLockAndShowIfNeeded() {
+        val shouldLock = AppLockManager.isLockEnabled(this) && !AppLockManager.isUnlockedThisSession
+        binding.lockOverlay.visibility = if (shouldLock) android.view.View.VISIBLE else android.view.View.GONE
+        if (shouldLock) showBiometricPrompt()
+    }
+
+    private fun showBiometricPrompt() {
+        val executor: Executor = ContextCompat.getMainExecutor(this)
+        val prompt = BiometricPrompt(this, executor, object : BiometricPrompt.AuthenticationCallback() {
+            override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                AppLockManager.isUnlockedThisSession = true
+                binding.lockOverlay.visibility = android.view.View.GONE
+            }
+            override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                // Leave the overlay up; user can tap Unlock to retry.
+            }
+        })
+        val promptInfo = BiometricPrompt.PromptInfo.Builder()
+            .setTitle("Unlock Rotation Board")
+            .setAllowedAuthenticators(
+                BiometricManager.Authenticators.BIOMETRIC_WEAK or
+                    BiometricManager.Authenticators.DEVICE_CREDENTIAL
+            )
+            .build()
+        prompt.authenticate(promptInfo)
+    }
+
+    // ---------- Alarm sound picker ----------
+
+    private fun openRingtonePicker() {
+        val bundledUri = Uri.parse("android.resource://$packageName/${com.rotationboard.app.R.raw.alarm_sound}")
+        val existing = AlarmPrefs.getCustomSoundUri(this) ?: bundledUri
+        val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
+            putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM)
+            putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, false)
+            putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true)
+            putExtra(RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI, bundledUri)
+            putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, existing)
+            putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Choose alarm sound")
+        }
+        ringtonePickerLauncher.launch(intent)
+    }
+
+    // ---------- List filtering/sorting ----------
 
     private fun applyFilterAndSort() {
         val filtered = if (searchQuery.isEmpty()) {
@@ -117,8 +211,6 @@ class DashboardActivity : AppCompatActivity() {
 
         // Ready accounts first (they need action), then cooling ones soonest-first,
         // then idle ones — so the thing you're most likely to act on is always on top.
-        // (AccountStatus is declared READY, COOLING, IDLE, so its ordinal already
-        // matches this priority order.)
         val sorted = filtered.sortedWith(
             compareBy(
                 { statusOf(it).ordinal },
@@ -141,6 +233,8 @@ class DashboardActivity : AppCompatActivity() {
     private fun updateEmptyState(isEmpty: Boolean) {
         binding.tvEmpty.visibility = if (isEmpty) android.view.View.VISIBLE else android.view.View.GONE
     }
+
+    // ---------- Permissions / battery / autostart ----------
 
     private fun requestNotifPermissionIfNeeded() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -165,7 +259,6 @@ class DashboardActivity : AppCompatActivity() {
             }
             startActivity(intent)
         } catch (e: Exception) {
-            // Some OEM ROMs block this screen; fall back to the general battery settings page.
             try {
                 startActivity(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
             } catch (e2: Exception) { /* give up quietly */ }
@@ -200,6 +293,7 @@ class DashboardActivity : AppCompatActivity() {
                 lifecycleScope.launch {
                     AlarmScheduler.cancel(this@DashboardActivity, acc.id)
                     AppDatabase.getInstance(applicationContext).accountDao().delete(acc)
+                    WidgetUpdater.requestUpdate(applicationContext)
                 }
             }
             .setNegativeButton("Cancel", null)
@@ -210,6 +304,7 @@ class DashboardActivity : AppCompatActivity() {
         super.onResume()
         handler.post(tickRunnable)
         updateBatteryBanner()
+        checkLockAndShowIfNeeded()
     }
 
     override fun onPause() {
