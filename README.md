@@ -29,18 +29,28 @@ account's cooldown finishes, not just a notification.
   clipboard when you're ready to switch accounts.
 
 ## If an alarm doesn't ring
-This app was hardened against the most common causes, but Android phones
-(especially Xiaomi/MIUI, Vivo, Oppo, Realme, and OnePlus) are notorious for
-killing scheduled background alarms unless you explicitly tell the OS not to.
-If an alarm is ever silent:
-1. Open the app — if you see the **"Fix this"** banner, tap it and allow the
-   app to ignore battery optimization.
-2. On MIUI/Vivo/Oppo phones specifically, also check Settings → Apps →
-   Rotation Board → look for an "Autostart" or "Allow background activity"
-   toggle and enable it — this is a manufacturer-specific setting outside
-   what any app can request permission for directly.
-3. Make sure notification permission was granted (the app asks for this on
-   first open).
+This app now bundles its own alarm sound file inside the app (instead of
+relying on your phone's system ringtone, which can silently be missing or
+null on some devices), and auto-boosts your phone's dedicated **Alarm**
+volume slider if it's muted — Android has a separate alarm volume from your
+ringer/media volume, and it's very easy to have it sitting at zero without
+realizing.
+
+If it's still silent, use the **"Test alarm now"** button on the dashboard —
+it triggers the exact same ringing screen/sound/vibration immediately,
+skipping the scheduled-alarm system entirely. This tells you which half of
+the problem you have:
+
+- **Test alarm rings fine, but scheduled ones don't** → the problem is Android
+  killing the scheduled alarm before it fires. Go to Settings → Apps →
+  Rotation Board and check for any "Autostart" or "Allow background
+  activity" toggle (common on MIUI/Vivo/Oppo/Realme/OnePlus) and enable it,
+  in addition to the "Fix this" battery banner in the app.
+- **Test alarm doesn't ring either** → something more fundamental is
+  blocking it on your specific device/Android version. Please share what
+  happens (or doesn't) when you tap it, plus your phone brand and Android
+  version, so this can be narrowed down further.
+
 
 
 ## How to build the APK (no local Android Studio needed)

@@ -122,5 +122,16 @@
             android:layout_margin="20dp"
             android:src="@android:drawable/ic_input_add"
             app:backgroundTint="@color/ready" />
+
+        <Button
+            android:id="@+id/btnTestAlarm"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|start"
+            android:layout_margin="12dp"
+            android:text="Test alarm now"
+            android:textSize="11sp"
+            android:textColor="@color/text_dim" />
     </FrameLayout>
 </LinearLayout>

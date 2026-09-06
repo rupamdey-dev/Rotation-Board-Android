@@ -73,6 +73,8 @@ class DashboardActivity : AppCompatActivity() {
             startActivity(Intent(this, AddEditAccountActivity::class.java))
         }
 
+        binding.btnTestAlarm.setOnClickListener { fireTestAlarm() }
+
         binding.etSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -161,6 +163,19 @@ class DashboardActivity : AppCompatActivity() {
             try {
                 startActivity(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
             } catch (e2: Exception) { /* give up quietly */ }
+        }
+    }
+
+    private fun fireTestAlarm() {
+        val serviceIntent = Intent(this, com.rotationboard.app.service.AlarmRingService::class.java).apply {
+            putExtra("accountId", -1L)
+            putExtra("email", "Test alarm")
+            putExtra("project", "This is just a test — tap Dismiss")
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(serviceIntent)
+        } else {
+            startService(serviceIntent)
         }
     }
 

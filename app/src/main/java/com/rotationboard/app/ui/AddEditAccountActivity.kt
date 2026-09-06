@@ -12,6 +12,7 @@ import com.rotationboard.app.util.SessionManager
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 
 class AddEditAccountActivity : AppCompatActivity() {
@@ -156,6 +157,12 @@ class AddEditAccountActivity : AppCompatActivity() {
             }
 
             AlarmScheduler.schedule(this@AddEditAccountActivity, finalAccount)
+            val sdf = SimpleDateFormat("h:mm a", Locale.getDefault())
+            android.widget.Toast.makeText(
+                this@AddEditAccountActivity,
+                "Alarm set for ${sdf.format(Date(endTime))}",
+                android.widget.Toast.LENGTH_LONG
+            ).show()
             finish()
         }
     }
