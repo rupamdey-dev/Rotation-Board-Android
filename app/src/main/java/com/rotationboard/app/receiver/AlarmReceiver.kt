@@ -8,12 +8,16 @@ import android.os.PowerManager
 import android.util.Log
 import com.rotationboard.app.data.AppDatabase
 import com.rotationboard.app.service.AlarmRingService
+import com.rotationboard.app.util.DebugLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
+        val email = intent.getStringExtra("email") ?: ""
+        val accountId = intent.getLongExtra("accountId", -1)
+        DebugLog.add(context, "RECEIVER FIRED: id=$accountId $email")
         Log.d(TAG, "Alarm fired, waking device and starting ring service")
 
         // Grab a short wake lock so the CPU can't go back to sleep between
@@ -27,10 +31,9 @@ class AlarmReceiver : BroadcastReceiver() {
         )
         wakeLock.acquire(20_000L) // auto-releases after 20s as a safety net regardless
 
-        val accountId = intent.getLongExtra("accountId", -1)
         val svcIntent = Intent(context, AlarmRingService::class.java).apply {
             putExtra("accountId", accountId)
-            putExtra("email", intent.getStringExtra("email"))
+            putExtra("email", email)
             putExtra("project", intent.getStringExtra("project"))
         }
         try {
@@ -39,8 +42,10 @@ class AlarmReceiver : BroadcastReceiver() {
             } else {
                 context.startService(svcIntent)
             }
+            DebugLog.add(context, "RECEIVER: startForegroundService() call succeeded (no exception)")
         } catch (e: Exception) {
             Log.e(TAG, "Failed to start AlarmRingService", e)
+            DebugLog.add(context, "RECEIVER ERROR: startForegroundService failed: ${e.javaClass.simpleName}: ${e.message}")
         } finally {
             if (wakeLock.isHeld) wakeLock.release()
         }

@@ -28,6 +28,22 @@ account's cooldown finishes, not just a notification.
 - **Copy button** on each row to quickly copy the Gmail address to your
   clipboard when you're ready to switch accounts.
 
+## Debug log (new)
+There's now a **"Debug log"** button on the dashboard (top-right of the
+account list area). It records, with timestamps, every step of the alarm
+pipeline:
+- When an alarm is scheduled, and whether Android reports it as actually
+  allowed to schedule exact alarms
+- Whether the receiver ever actually fires when the time comes
+- Whether the foreground service and notification start successfully
+- Whether the bundled sound plays successfully
+- Every single run of the 15-minute backup worker, and whether it found
+  anything overdue
+
+If an alarm goes silent, open this screen, tap **"Copy all"**, and send that
+text over — it will show exactly which step is failing instead of guessing
+at phone settings.
+
 ## If a scheduled alarm doesn't ring (but "Test alarm now" does)
 This means the ringing mechanism itself is fine — the problem is Android (or
 your phone's manufacturer) killing the alarm before it fires. Two things now

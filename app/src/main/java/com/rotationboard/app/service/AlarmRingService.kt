@@ -20,6 +20,7 @@ import com.rotationboard.app.R
 import com.rotationboard.app.data.AppDatabase
 import com.rotationboard.app.ui.AlarmActivity
 import com.rotationboard.app.util.AlarmScheduler
+import com.rotationboard.app.util.DebugLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -57,6 +58,7 @@ class AlarmRingService : Service() {
         val accountId = intent?.getLongExtra("accountId", -1) ?: -1L
 
         Log.d(TAG, "Ringing for $email / $project")
+        DebugLog.add(this, "SERVICE onStartCommand: ringing for id=$accountId $email")
 
         showNotificationAndFullScreen(email, project, accountId)
         boostAlarmVolumeIfMuted()
@@ -94,8 +96,10 @@ class AlarmRingService : Service() {
                 .build()
 
             startForeground(1001, notification)
+            DebugLog.add(this, "SERVICE: startForeground() succeeded")
         } catch (e: Exception) {
             Log.e(TAG, "Failed to post foreground notification", e)
+            DebugLog.add(this, "SERVICE ERROR: startForeground failed: ${e.javaClass.simpleName}: ${e.message}")
         }
 
         // Belt-and-braces: also try to launch the full-screen activity directly,
@@ -155,10 +159,12 @@ class AlarmRingService : Service() {
                 mediaPlayer?.isLooping = true
                 mediaPlayer?.start()
                 Log.d(TAG, "Playing bundled alarm sound")
+                DebugLog.add(this, "SERVICE: bundled sound started OK")
                 return
             }
         } catch (e: Exception) {
             Log.e(TAG, "Bundled alarm sound failed, falling back to system ringtone", e)
+            DebugLog.add(this, "SERVICE ERROR: bundled sound failed: ${e.javaClass.simpleName}: ${e.message}")
         }
 
         // Fallback: try the system's alarm/notification/ringtone in that order.

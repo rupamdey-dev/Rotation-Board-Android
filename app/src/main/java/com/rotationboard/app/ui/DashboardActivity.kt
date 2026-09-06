@@ -74,6 +74,9 @@ class DashboardActivity : AppCompatActivity() {
         }
 
         binding.btnTestAlarm.setOnClickListener { fireTestAlarm() }
+        binding.btnDebugLog.setOnClickListener {
+            startActivity(Intent(this, DebugLogActivity::class.java))
+        }
 
         binding.etSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
