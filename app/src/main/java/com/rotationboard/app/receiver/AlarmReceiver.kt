@@ -6,7 +6,11 @@ import android.content.Intent
 import android.os.Build
 import android.os.PowerManager
 import android.util.Log
+import com.rotationboard.app.data.AppDatabase
 import com.rotationboard.app.service.AlarmRingService
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
@@ -23,8 +27,9 @@ class AlarmReceiver : BroadcastReceiver() {
         )
         wakeLock.acquire(20_000L) // auto-releases after 20s as a safety net regardless
 
+        val accountId = intent.getLongExtra("accountId", -1)
         val svcIntent = Intent(context, AlarmRingService::class.java).apply {
-            putExtra("accountId", intent.getLongExtra("accountId", -1))
+            putExtra("accountId", accountId)
             putExtra("email", intent.getStringExtra("email"))
             putExtra("project", intent.getStringExtra("project"))
         }
@@ -38,6 +43,21 @@ class AlarmReceiver : BroadcastReceiver() {
             Log.e(TAG, "Failed to start AlarmRingService", e)
         } finally {
             if (wakeLock.isHeld) wakeLock.release()
+        }
+
+        // Mark this alarm as rung so the backup periodic worker (see
+        // AlarmCheckWorker) doesn't fire it again a second time.
+        if (accountId != -1L) {
+            val pending = goAsync()
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    AppDatabase.getInstance(context).accountDao().markRung(accountId)
+                } catch (e: Exception) {
+                    Log.e(TAG, "Failed to mark account rung", e)
+                } finally {
+                    pending.finish()
+                }
+            }
         }
     }
 

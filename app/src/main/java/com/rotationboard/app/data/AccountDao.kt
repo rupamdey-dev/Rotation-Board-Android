@@ -15,6 +15,12 @@ interface AccountDao {
     @Query("SELECT * FROM accounts WHERE endTime IS NOT NULL")
     suspend fun getAllScheduled(): List<AccountEntity>
 
+    @Query("SELECT * FROM accounts WHERE endTime IS NOT NULL AND endTime <= :now AND rung = 0")
+    suspend fun getOverdueUnrung(now: Long): List<AccountEntity>
+
+    @Query("UPDATE accounts SET rung = 1 WHERE id = :id")
+    suspend fun markRung(id: Long)
+
     @Query("SELECT * FROM accounts WHERE id = :id LIMIT 1")
     suspend fun getById(id: Long): AccountEntity?
 

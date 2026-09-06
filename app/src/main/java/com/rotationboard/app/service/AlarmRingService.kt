@@ -219,7 +219,7 @@ class AlarmRingService : Service() {
             val dao = AppDatabase.getInstance(applicationContext).accountDao()
             val acc = dao.getById(accountId)
             if (acc != null) {
-                val snoozed = acc.copy(endTime = System.currentTimeMillis() + SNOOZE_MS)
+                val snoozed = acc.copy(endTime = System.currentTimeMillis() + SNOOZE_MS, rung = false)
                 dao.update(snoozed)
                 AlarmScheduler.schedule(applicationContext, snoozed)
             }

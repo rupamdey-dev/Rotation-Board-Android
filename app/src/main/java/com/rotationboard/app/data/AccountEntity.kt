@@ -12,5 +12,6 @@ data class AccountEntity(
     val timerMode: String,      // "hours" or "time"
     val timerHours: Float,
     val timerTimeStr: String,   // "HH:MM" 24hr, empty when mode = hours
-    val endTime: Long?          // epoch millis; null = never started / idle
+    val endTime: Long?,         // epoch millis; null = never started / idle
+    val rung: Boolean = false   // true once this endTime's alarm has fired (via AlarmManager or the backup worker)
 )

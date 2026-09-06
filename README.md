@@ -28,28 +28,27 @@ account's cooldown finishes, not just a notification.
 - **Copy button** on each row to quickly copy the Gmail address to your
   clipboard when you're ready to switch accounts.
 
-## If an alarm doesn't ring
-This app now bundles its own alarm sound file inside the app (instead of
-relying on your phone's system ringtone, which can silently be missing or
-null on some devices), and auto-boosts your phone's dedicated **Alarm**
-volume slider if it's muted — Android has a separate alarm volume from your
-ringer/media volume, and it's very easy to have it sitting at zero without
-realizing.
+## If a scheduled alarm doesn't ring (but "Test alarm now" does)
+This means the ringing mechanism itself is fine — the problem is Android (or
+your phone's manufacturer) killing the alarm before it fires. Two things now
+help with this directly:
 
-If it's still silent, use the **"Test alarm now"** button on the dashboard —
-it triggers the exact same ringing screen/sound/vibration immediately,
-skipping the scheduled-alarm system entirely. This tells you which half of
-the problem you have:
+1. **"Open autostart settings"** button on the dashboard — on Xiaomi/MIUI,
+   Vivo, Oppo, Realme, OnePlus, and Huawei/Honor phones, there's a SEPARATE
+   permission system from standard Android's battery optimization, usually
+   called "Autostart" or "Allow background activity." This button jumps
+   straight to that screen for your phone brand and enables it — this is by
+   far the most common cause of "the alarm just doesn't ring" on these
+   brands, and standard Android battery optimization settings don't cover it.
+2. **A 15-minute backup safety net** — even if a scheduled alarm still gets
+   killed somehow, the app now also checks in the background roughly every
+   15 minutes (the shortest interval Android allows) for any account whose
+   time has passed without ringing, and fires it then. Not instant, but you
+   should never be left waiting indefinitely with zero alert.
 
-- **Test alarm rings fine, but scheduled ones don't** → the problem is Android
-  killing the scheduled alarm before it fires. Go to Settings → Apps →
-  Rotation Board and check for any "Autostart" or "Allow background
-  activity" toggle (common on MIUI/Vivo/Oppo/Realme/OnePlus) and enable it,
-  in addition to the "Fix this" battery banner in the app.
-- **Test alarm doesn't ring either** → something more fundamental is
-  blocking it on your specific device/Android version. Please share what
-  happens (or doesn't) when you tap it, plus your phone brand and Android
-  version, so this can be narrowed down further.
+If it's still silent after enabling autostart, use **"Test alarm now"** to
+re-confirm ringing still works, then let me know your exact phone brand,
+model, and Android version so this can be narrowed down further.
 
 
 

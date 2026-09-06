@@ -137,7 +137,8 @@ class AddEditAccountActivity : AppCompatActivity() {
                     timerMode = mode,
                     timerHours = hours,
                     timerTimeStr = timeStr,
-                    endTime = endTime
+                    endTime = endTime,
+                    rung = false
                 )
                 dao.update(updated)
                 savedId = updated.id
@@ -150,7 +151,8 @@ class AddEditAccountActivity : AppCompatActivity() {
                     timerMode = mode,
                     timerHours = hours,
                     timerTimeStr = timeStr,
-                    endTime = endTime
+                    endTime = endTime,
+                    rung = false
                 )
                 savedId = dao.insert(newAccount)
                 finalAccount = newAccount.copy(id = savedId)

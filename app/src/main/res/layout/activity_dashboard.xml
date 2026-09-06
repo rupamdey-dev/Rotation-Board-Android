@@ -90,6 +90,31 @@
                 android:text="Fix this"
                 android:textSize="12sp" />
         </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/surface"
+            android:padding="12dp"
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="On Xiaomi, Vivo, Oppo, Realme, OnePlus, and Huawei/Honor phones, also allow &quot;Autostart&quot; / background activity for this app — this is the #1 reason scheduled alarms go silent."
+                android:textColor="@color/text_dim"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btnAutostart"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Open autostart settings"
+                android:textSize="12sp" />
+        </LinearLayout>
     </LinearLayout>
 
     <FrameLayout

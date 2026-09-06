@@ -6,6 +6,11 @@ import android.app.NotificationManager
 import android.media.AudioAttributes
 import android.media.RingtoneManager
 import android.os.Build
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import com.rotationboard.app.util.AlarmCheckWorker
+import java.util.concurrent.TimeUnit
 
 class App : Application() {
     override fun onCreate() {
@@ -29,6 +34,13 @@ class App : Application() {
             val nm = getSystemService(NotificationManager::class.java)
             nm.createNotificationChannel(channel)
         }
+
+        val workRequest = PeriodicWorkRequestBuilder<AlarmCheckWorker>(15, TimeUnit.MINUTES).build()
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            "alarm_check_worker",
+            ExistingPeriodicWorkPolicy.KEEP,
+            workRequest
+        )
     }
 
     companion object {

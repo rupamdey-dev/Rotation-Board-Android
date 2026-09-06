@@ -85,6 +85,9 @@ class DashboardActivity : AppCompatActivity() {
         })
 
         binding.btnFixBattery.setOnClickListener { requestIgnoreBatteryOptimizations() }
+        binding.btnAutostart.setOnClickListener {
+            com.rotationboard.app.util.OemSettingsHelper.openAutoStartSettings(this)
+        }
 
         requestNotifPermissionIfNeeded()
         updateBatteryBanner()
