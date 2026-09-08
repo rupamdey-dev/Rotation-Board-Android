@@ -16,13 +16,29 @@
             android:orientation="vertical"
             android:padding="20dp">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/app_name"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:textColor="@color/text_main" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/app_name"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_main" />
+
+                <Button
+                    android:id="@+id/btnSettings"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Settings"
+                    android:textSize="13sp" />
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -68,98 +84,6 @@
                 android:layout_marginTop="10dp"
                 android:inputType="text"
                 android:maxLines="1" />
-
-            <LinearLayout
-                android:id="@+id/bannerBattery"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@color/surface"
-                android:padding="12dp"
-                android:layout_marginTop="10dp"
-                android:visibility="gone">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="For alarms to ring reliably, allow this app to ignore battery optimization."
-                    android:textColor="@color/text_dim"
-                    android:textSize="12sp" />
-
-                <Button
-                    android:id="@+id/btnFixBattery"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="Fix this"
-                    android:textSize="12sp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@color/surface"
-                android:padding="12dp"
-                android:layout_marginTop="10dp">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="On Xiaomi, Vivo, Oppo, Realme, OnePlus, and Huawei/Honor phones, also allow &quot;Autostart&quot; / background activity for this app — this is the #1 reason scheduled alarms go silent."
-                    android:textColor="@color/text_dim"
-                    android:textSize="12sp" />
-
-                <Button
-                    android:id="@+id/btnAutostart"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="Open autostart settings"
-                    android:textSize="12sp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:layout_marginTop="10dp">
-
-                <Button
-                    android:id="@+id/btnAlarmSound"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Alarm sound"
-                    android:textSize="12sp" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="8dp"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:background="@color/surface"
-                    android:padding="8dp">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="App lock"
-                        android:textColor="@color/text_dim"
-                        android:textSize="12sp" />
-
-                    <Switch
-                        android:id="@+id/switchAppLock"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
-            </LinearLayout>
         </LinearLayout>
 
         <FrameLayout
@@ -192,28 +116,6 @@
                 android:layout_margin="20dp"
                 android:src="@android:drawable/ic_input_add"
                 app:backgroundTint="@color/ready" />
-
-            <Button
-                android:id="@+id/btnTestAlarm"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|start"
-                android:layout_margin="12dp"
-                android:text="Test alarm now"
-                android:textSize="11sp"
-                android:textColor="@color/text_dim" />
-
-            <Button
-                android:id="@+id/btnDebugLog"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="top|end"
-                android:layout_margin="4dp"
-                android:text="Debug log"
-                android:textSize="11sp"
-                android:textColor="@color/text_dim" />
         </FrameLayout>
     </LinearLayout>
 

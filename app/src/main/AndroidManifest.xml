@@ -30,7 +30,7 @@
 
         <activity android:name=".ui.DashboardActivity" android:exported="false" />
         <activity android:name=".ui.AddEditAccountActivity" android:exported="false" />
-        <activity android:name=".ui.DebugLogActivity" android:exported="false" />
+        <activity android:name=".ui.SettingsActivity" android:exported="false" />
 
         <activity
             android:name=".ui.AlarmActivity"
