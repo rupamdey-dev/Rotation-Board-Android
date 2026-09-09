@@ -7,8 +7,10 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.speech.RecognizerIntent
 import android.text.Editable
 import android.text.TextWatcher
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -22,8 +24,10 @@ import com.rotationboard.app.databinding.ActivityDashboardBinding
 import com.rotationboard.app.util.AlarmScheduler
 import com.rotationboard.app.util.AppLockManager
 import com.rotationboard.app.util.SessionManager
+import com.rotationboard.app.util.VoiceTimeParser
 import com.rotationboard.app.widget.WidgetUpdater
 import kotlinx.coroutines.launch
+import java.util.Calendar
 import java.util.concurrent.Executor
 
 // This is the app's home screen: just the list of accounts/projects/timers.
@@ -34,6 +38,7 @@ class DashboardActivity : AppCompatActivity() {
     private lateinit var adapter: AccountAdapter
     private var allAccounts: List<AccountEntity> = emptyList()
     private var searchQuery: String = ""
+    private var pendingVoiceAccountId: Long? = null
 
     private val handler = Handler(Looper.getMainLooper())
     private val tickRunnable = object : Runnable {
@@ -46,6 +51,30 @@ class DashboardActivity : AppCompatActivity() {
     private val notifPermLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { /* no-op either way; UI just won't show notifications if denied */ }
+
+    private val micPermLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted) launchVoiceRecognizer() else Toast.makeText(this, "Microphone permission is needed for voice input", Toast.LENGTH_SHORT).show()
+    }
+
+    private val voiceRecognizerLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        val accountId = pendingVoiceAccountId
+        pendingVoiceAccountId = null
+        val text = result.data
+            ?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+            ?.firstOrNull()
+        if (accountId == null || text == null) return@registerForActivityResult
+
+        val parsed = VoiceTimeParser.parse(text)
+        if (parsed == null) {
+            Toast.makeText(this, "Couldn't understand \"$text\" as a time — try again", Toast.LENGTH_LONG).show()
+            return@registerForActivityResult
+        }
+        applyVoiceTime(accountId, parsed.first, parsed.second, text)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,7 +100,8 @@ class DashboardActivity : AppCompatActivity() {
         adapter = AccountAdapter(
             onEdit = { acc -> openEdit(acc) },
             onDelete = { acc -> confirmDelete(acc) },
-            onSetTime = { acc -> openEdit(acc) }
+            onSetTime = { acc -> openEdit(acc) },
+            onVoiceSetTime = { acc -> startVoiceSetTime(acc) }
         )
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
@@ -131,6 +161,67 @@ class DashboardActivity : AppCompatActivity() {
             )
             .build()
         prompt.authenticate(promptInfo)
+    }
+
+    // ---------- Voice time input ----------
+
+    private fun startVoiceSetTime(acc: AccountEntity) {
+        pendingVoiceAccountId = acc.id
+        val hasMicPerm = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) ==
+            PackageManager.PERMISSION_GRANTED
+        if (hasMicPerm) {
+            launchVoiceRecognizer()
+        } else {
+            micPermLauncher.launch(Manifest.permission.RECORD_AUDIO)
+        }
+    }
+
+    private fun launchVoiceRecognizer() {
+        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+            putExtra(RecognizerIntent.EXTRA_PROMPT, "Say a time, e.g. \"nine forty five pm\"")
+        }
+        try {
+            voiceRecognizerLauncher.launch(intent)
+        } catch (e: Exception) {
+            Toast.makeText(this, "Voice input isn't available on this device", Toast.LENGTH_SHORT).show()
+            pendingVoiceAccountId = null
+        }
+    }
+
+    private fun applyVoiceTime(accountId: Long, hour: Int, minute: Int, heardText: String) {
+        lifecycleScope.launch {
+            val dao = AppDatabase.getInstance(applicationContext).accountDao()
+            val acc = dao.getById(accountId) ?: return@launch
+
+            val cal = Calendar.getInstance().apply {
+                set(Calendar.HOUR_OF_DAY, hour)
+                set(Calendar.MINUTE, minute)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
+            }
+            if (cal.timeInMillis <= System.currentTimeMillis()) {
+                cal.add(Calendar.DAY_OF_YEAR, 1) // next occurrence of that clock time
+            }
+
+            val timeStr = String.format(java.util.Locale.US, "%02d:%02d", hour, minute)
+            val updated = acc.copy(
+                timerMode = "time",
+                timerTimeStr = timeStr,
+                endTime = cal.timeInMillis,
+                rung = false
+            )
+            dao.update(updated)
+            AlarmScheduler.schedule(this@DashboardActivity, updated)
+            WidgetUpdater.requestUpdate(applicationContext)
+
+            val sdf = java.text.SimpleDateFormat("h:mm a", java.util.Locale.getDefault())
+            Toast.makeText(
+                this@DashboardActivity,
+                "✅ ${acc.email} set for ${sdf.format(cal.time)} (heard: \"$heardText\")",
+                Toast.LENGTH_LONG
+            ).show()
+        }
     }
 
     // ---------- List filtering/sorting ----------

@@ -38,6 +38,19 @@ account's cooldown finishes, not just a notification.
 The debug log has been removed now that the alarm pipeline is confirmed
 working — it did its job for diagnosis and isn't needed day-to-day.
 
+## Voice time input (new)
+Every account row now has a **🎤** button. Tap it, speak a time — things
+like "nine forty five pm", "9:45 PM", "quarter past five in the evening",
+"half past nine am", "noon", "midnight" — and that account's cooldown
+restarts at that time immediately, no typing or dropdowns needed. Uses
+Android's built-in voice input (same system dialog as Google Search), so it
+needs microphone permission (asked for the first time you tap the mic) and a
+speech recognition service installed (standard on virtually all Android
+phones via the Google app).
+
+If it mishears you, it'll say so in a toast and leave the account untouched
+— just tap the mic again and try once more.
+
 ## New features
 - **Custom alarm sound** — "Alarm sound" button on the dashboard opens your
   phone's ringtone picker so you can choose any sound instead of the bundled

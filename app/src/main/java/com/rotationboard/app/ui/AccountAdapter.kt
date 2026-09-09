@@ -24,7 +24,8 @@ fun statusOf(acc: AccountEntity): AccountStatus {
 class AccountAdapter(
     private val onEdit: (AccountEntity) -> Unit,
     private val onDelete: (AccountEntity) -> Unit,
-    private val onSetTime: (AccountEntity) -> Unit
+    private val onSetTime: (AccountEntity) -> Unit,
+    private val onVoiceSetTime: (AccountEntity) -> Unit
 ) : RecyclerView.Adapter<AccountAdapter.VH>() {
 
     private var items: List<AccountEntity> = emptyList()
@@ -70,6 +71,7 @@ class AccountAdapter(
             }
 
             binding.btnPrimary.setOnClickListener { onSetTime(acc) }
+            binding.btnMic.setOnClickListener { onVoiceSetTime(acc) }
             binding.btnEdit.setOnClickListener { onEdit(acc) }
             binding.btnDelete.setOnClickListener { onDelete(acc) }
             binding.btnCopy.setOnClickListener { copyToClipboard(acc.email) }
